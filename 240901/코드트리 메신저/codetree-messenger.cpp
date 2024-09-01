@@ -28,8 +28,11 @@ void input() {
         temp.parent = inputs[i];
         temp.power = inputs[i + N];
         nodes[i] = temp;
-        
-        nodes[inputs[i]].child.push_back(i);
+    }
+    
+    for(int i = 1;i <= N;i++) {
+        int parentNum =  nodes[i].parent;
+        nodes[parentNum].child.push_back(i);
     }
 }
 
@@ -38,12 +41,6 @@ void swapParents(const int c1, const int c2) {
     Node copyC2 = nodes[c2];
     
     // [C1 <- C2]
-    // 1. 자식 노드로 가서 부모 노드 변경
-    for(int i = 0;i < nodes[c1].child.size();i++) {
-        int childNum = nodes[c1].child[i];
-        
-        nodes[childNum].parent = c2;
-    }
     // 2. 부모 노드로 가서 자식 노드 변경
     int parentNum = nodes[c1].parent;
     for(int i = 0;i < nodes[parentNum].child.size();i++) {
@@ -58,12 +55,6 @@ void swapParents(const int c1, const int c2) {
     nodes[c2].parent = nodes[c1].parent;
     
     // [C2 <- C1]
-    // 1. 자식 노드로 가서 부모 노드 변경
-    for(int i = 0;i < copyC2.child.size();i++) {
-        int childNum = copyC2.child[i];
-        
-        nodes[childNum].parent = c1;
-    }
     // 2. 부모 노드로 가서 자식 노드 변경
     parentNum = copyC2.parent;
     for(int i = 0;i < nodes[parentNum].child.size();i++) {
@@ -141,14 +132,6 @@ int main() {
             cin>>c1>>c2;
             
             swapParents(c1, c2);
-//            for(int i = 1;i <= N;i++) {
-//                cout<<"i: "<<i<<", parent: "<<nodes[i].parent<<", power: "<<nodes[i].power<<", alarm: "<<nodes[i].alarm<<", child: ";
-//                for(int j = 0 ;j < nodes[i].child.size();j++) {
-//                    cout<<nodes[i].child[j]<<", ";
-//
-//                }
-//                cout<<"\n\n";
-//            }
         }
         // 5. 알림을 받을 수 있는 채팅방 조회
         else {
