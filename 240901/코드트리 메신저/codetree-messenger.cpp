@@ -34,6 +34,10 @@ void input() {
 }
 
 void swapParents(const int c1, const int c2) {
+    Node copyC1 = nodes[c1];
+    Node copyC2 = nodes[c2];
+    
+    // [C1 <- C2]
     // 1. 자식 노드로 가서 부모 노드 변경
     for(int i = 0;i < nodes[c1].child.size();i++) {
         int childNum = nodes[c1].child[i];
@@ -51,7 +55,27 @@ void swapParents(const int c1, const int c2) {
         }
     }
     // 3. 부모 노드 변경
-    nodes[c1].parent = c2;
+    nodes[c2].parent = nodes[c1].parent;
+    
+    // [C2 <- C1]
+    // 1. 자식 노드로 가서 부모 노드 변경
+    for(int i = 0;i < copyC2.child.size();i++) {
+        int childNum = copyC2.child[i];
+        
+        nodes[childNum].parent = c1;
+    }
+    // 2. 부모 노드로 가서 자식 노드 변경
+    parentNum = copyC2.parent;
+    for(int i = 0;i < nodes[parentNum].child.size();i++) {
+        int childNum = nodes[parentNum].child[i];
+        
+        if (childNum == c2) {
+            nodes[parentNum].child[i] = c1;
+            break;
+        }
+    }
+    // 3. 부모 노드 변경
+    nodes[c1].parent = copyC2.parent;
 }
 
 void dfs(int c, int depth) {
@@ -59,11 +83,12 @@ void dfs(int c, int depth) {
     if (nodes[c].alarm == false)
         return;
     
-    // 초기 권한 세기가 안맞으면 종료
-    if (nodes[c].power < depth)
-        return;
+    // 초기 권한 세기가 안맞으면 종료 ==> 이러면 안됨 그 밑에 어떤게 있을 줄 모름
+    if (nodes[c].power >= depth)
+        sum += 1;
     
-    sum += 1;
+//    sum += 1;
+//    cout<<"depth: "<<depth<<", c: "<<c<<"\n";
     
     for(int i = 0;i < nodes[c].child.size();i++) {
         int childNum = nodes[c].child[i];
@@ -73,12 +98,13 @@ void dfs(int c, int depth) {
 
 int searchAlarm(int c) {
     sum = 0;
-    
+
     for(int i = 0;i < nodes[c].child.size();i++) {
         int childNum = nodes[c].child[i];
         
         dfs(childNum, 1);
     }
+//    cout<<endl;
     
     return sum;
 }
@@ -115,7 +141,14 @@ int main() {
             cin>>c1>>c2;
             
             swapParents(c1, c2);
-            swapParents(c2, c1);
+//            for(int i = 1;i <= N;i++) {
+//                cout<<"i: "<<i<<", parent: "<<nodes[i].parent<<", power: "<<nodes[i].power<<", alarm: "<<nodes[i].alarm<<", child: ";
+//                for(int j = 0 ;j < nodes[i].child.size();j++) {
+//                    cout<<nodes[i].child[j]<<", ";
+//
+//                }
+//                cout<<"\n\n";
+//            }
         }
         // 5. 알림을 받을 수 있는 채팅방 조회
         else {
